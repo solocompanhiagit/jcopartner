@@ -1,0 +1,1545 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Tabela interativa de servicos e precos da parceria Solo & Companhia e JCO Bioprodutos para orcamento e ficha de envio de amostras.">
+    <title>Solo & Companhia & JCO Bioprodutos - Tabela de Serviços</title>
+    <link rel="icon" type="image/png" href="assets/logo-solo-e-companhia.png">
+    <meta property="og:title" content="Solo & Companhia & JCO Bioprodutos - Tabela de Servicos">
+    <meta property="og:description" content="Catalogo interativo de analises, orcamento e ficha de amostras.">
+    <meta property="og:type" content="website">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- html2pdf.js para exportação real de PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #020503;
+            color: #f3f4f6;
+            overflow-x: hidden;
+        }
+
+        /* Efeito de Fundo Aurora Gemini */
+        .aurora-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            background: radial-gradient(circle at 50% 50%, #030804 0%, #010302 100%);
+        }
+
+        .aurora-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(140px);
+            opacity: 0.12;
+            mix-blend-mode: screen;
+            animation: floatOrb 25s ease-in-out infinite alternate;
+        }
+
+        .orb-green {
+            background: radial-gradient(circle, #10b981 0%, transparent 70%);
+            width: 750px;
+            height: 750px;
+            top: -10%;
+            left: -15%;
+            animation-delay: 0s;
+        }
+
+        .orb-orange {
+            background: radial-gradient(circle, #f59e0b 0%, transparent 70%);
+            width: 650px;
+            height: 650px;
+            bottom: -5%;
+            right: -5%;
+            animation-delay: -6s;
+            opacity: 0.07;
+        }
+
+        .orb-cyan {
+            background: radial-gradient(circle, #06b6d4 0%, transparent 70%);
+            width: 550px;
+            height: 550px;
+            top: 25%;
+            left: 35%;
+            opacity: 0.08;
+            animation: floatOrb 32s ease-in-out infinite alternate-reverse;
+        }
+
+        @keyframes floatOrb {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(5%, 7%) scale(1.05); }
+            100% { transform: translate(-3%, -5%) scale(0.95); }
+        }
+
+        /* Efeitos de Vidro e Brilhos */
+        .glass-panel {
+            background: rgba(6, 12, 8, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(16, 185, 129, 0.12);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-panel:hover {
+            border-color: rgba(16, 185, 129, 0.25);
+            box-shadow: 0 12px 40px -15px rgba(16, 185, 129, 0.25);
+        }
+
+        .premium-border-jco {
+            border: 1px solid rgba(245, 158, 11, 0.35);
+            box-shadow: 0 0 30px rgba(245, 158, 11, 0.1);
+        }
+
+        .premium-border-jco:hover {
+            border-color: rgba(245, 158, 11, 0.6);
+            box-shadow: 0 15px 45px -10px rgba(245, 158, 11, 0.25);
+        }
+
+        /* Gradientes de Texto */
+        .text-gradient {
+            background: linear-gradient(135deg, #ffffff 30%, #a7f3d0 75%, #34d399 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Scrollbar Personalizada */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #010302;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(16, 185, 129, 0.2);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(16, 185, 129, 0.4);
+        }
+    </style>
+</head>
+<body class="min-h-screen relative pb-16 antialiased">
+
+    <!-- Fundo de Partículas Aurora -->
+    <div class="aurora-bg">
+        <div class="aurora-orb orb-green"></div>
+        <div class="aurora-orb orb-orange"></div>
+        <div class="aurora-orb orb-cyan"></div>
+    </div>
+
+    <!-- Topo da Página / Header de Parceria -->
+    <header class="container mx-auto px-4 pt-10 pb-6 relative z-10">
+        <div class="flex flex-col items-center text-center">
+            
+            <!-- Grid de Logotipos em Parceria -->
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10 mb-8 w-full max-w-3xl">
+                <!-- Solo & Cia Logo -->
+                <div class="relative group">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-green-400 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-500"></div>
+                    <div class="relative bg-black/50 px-6 py-4 rounded-2xl backdrop-blur-xl border border-emerald-500/15 flex items-center justify-center h-28 w-60">
+                        <img src="assets/logo-solo-e-companhia.png" alt="Logo Solo e Companhia" class="max-h-20 max-w-full object-contain" onerror="this.src='https://placehold.co/200x80/062f17/ffffff?text=Solo+%26+Cia'">
+                    </div>
+                </div>
+
+                <!-- Ícone de Parceria / Colaboração -->
+                <div class="flex flex-col items-center justify-center">
+                    <span class="text-xs font-bold text-emerald-400/50 uppercase tracking-widest bg-emerald-950/40 px-3 py-1 rounded-full border border-emerald-500/10">Parceria</span>
+                    <div class="h-8 w-[1px] bg-gradient-to-b from-transparent via-emerald-500/30 to-transparent sm:hidden my-2"></div>
+                    <i data-lucide="handshake" class="w-8 h-8 text-amber-500/80 animate-pulse my-2 hidden sm:block"></i>
+                </div>
+
+                <!-- JCO Bioprodutos Logo -->
+                <div class="relative group">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-amber-500 to-yellow-400 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-500"></div>
+                    <div class="relative bg-black/50 px-6 py-4 rounded-2xl backdrop-blur-xl border border-amber-500/15 flex items-center justify-center h-28 w-60">
+                        <img src="assets/jcobioprodutos-logo.png" alt="Logo JCO Bioprodutos" class="max-h-20 max-w-full object-contain" onerror="this.src='https://placehold.co/200x80/022c16/ffffff?text=JCO+Bioprodutos'">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Título & Descrição Principal -->
+            <h1 class="text-3xl md:text-5xl font-black tracking-tight mb-3">
+                <span class="text-gradient">Tabela Oficial de Serviços & Preços</span>
+            </h1>
+            <p class="text-amber-400 font-semibold tracking-widest text-xs md:text-sm uppercase flex items-center justify-center gap-2">
+                <span class="inline-block w-2 h-2 rounded-full bg-amber-500 animate-ping"></span>
+                Soluções Biológicas Integradas e Diagnóstico de Alta Precisão
+            </p>
+            
+            <!-- Badge de Referência de Documento -->
+            <div class="mt-4 flex flex-wrap justify-center gap-2">
+                <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-emerald-950/60 border border-emerald-500/20 text-emerald-300">
+                    <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5 text-emerald-400"></i>
+                    Ref: Tabela de Serviços e Preços - Solo e Companhia V2.xlsx
+                </span>
+                <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-amber-950/40 border border-amber-500/25 text-amber-300">
+                    <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-400"></i>
+                    Foco Especial: Dinâmica de Fósforo & Microbiologia
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 relative z-10 mt-4 max-w-6xl">
+        
+        <!-- BANNER DE RECOMENDAÇÃO TÉCNICA PRINCIPAL -->
+        <div class="relative overflow-hidden rounded-2xl p-6 mb-10 bg-gradient-to-r from-emerald-950/40 via-black/60 to-amber-950/30 border border-emerald-500/30 shadow-2xl">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute bottom-0 left-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none"></div>
+            
+            <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="flex items-center gap-4">
+                    <div class="p-3.5 bg-gradient-to-br from-emerald-500/20 to-amber-500/20 rounded-xl border border-emerald-500/30 text-emerald-400">
+                        <i data-lucide="info" class="w-8 h-8 text-amber-400 animate-bounce"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">Recomendação de Amostragem Técnica</span>
+                        <h2 class="text-lg md:text-xl font-bold text-white mt-1 leading-snug">
+                            Indicamos para profundidade de <span class="text-emerald-400 font-extrabold">0-20 cm</span> a análise <span class="text-emerald-300 underline underline-offset-4">Solo Max Plus</span> e para amostra de <span class="text-emerald-400 font-extrabold">20-40 cm</span> a análise <span class="text-emerald-300 underline underline-offset-4">Solo Básica + Enxofre</span>.
+                        </h2>
+                    </div>
+                </div>
+                <div class="flex-shrink-0 w-full md:w-auto">
+                    <div class="px-4 py-2 rounded-xl bg-black/40 border border-amber-500/25 text-center text-xs font-medium text-amber-300">
+                        Máxima Eficiência em Nutrição de Plantas
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEÇÃO DOS 3 PACOTES DE SOLO EM DESTAQUE (ORDEM REORGANIZADA) -->
+        <div class="mb-14">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-1.5 h-6 bg-gradient-to-b from-amber-500 to-emerald-500 rounded-full"></div>
+                <h3 class="text-xl font-extrabold text-white tracking-tight">Pacotes de Solo em Destaque (Foco Parceria JCO)</h3>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                <!-- 1º: BioAS Max Plus (serviço oficial da planilha) -->
+                <div class="glass-panel premium-border-jco rounded-2xl p-6 flex flex-col justify-between relative overflow-hidden group hover:-translate-y-1 lg:scale-[1.03] z-20">
+                    <div class="absolute top-0 right-0 bg-gradient-to-l from-amber-500 to-amber-600 text-black text-[10px] font-black px-4 py-1.5 rounded-bl-xl tracking-wider uppercase flex items-center gap-1.5">
+                        <i data-lucide="star" class="w-3.5 h-3.5 fill-black animate-spin"></i> Destaque BioAS
+                    </div>
+                    <div>
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="px-2.5 py-1 rounded-md text-xs font-bold bg-amber-950/60 text-amber-400 border border-amber-500/20">SOLO + BIOLOGIA</span>
+                            <div class="text-right">
+                                <span class="text-[10px] text-gray-400 block">Preço Oficial</span>
+                                <span class="text-3xl font-black text-amber-400">R$ 315,00</span>
+                            </div>
+                        </div>
+                        <h4 class="text-2xl font-black text-white flex items-center gap-2">
+                            BioAS Max Plus
+                        </h4>
+                        <p class="text-xs text-amber-400/90 font-medium mt-1 mb-5">Análise oficial para integrar fertilidade química, textura e indicadores biológicos BioAS em uma leitura de alta profundidade.</p>
+                        
+                        <div class="space-y-2.5 mb-8 text-xs text-gray-200 border-t border-amber-500/10 pt-4">
+                            <div class="flex items-start gap-2">
+                                <i data-lucide="sparkles" class="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5"></i>
+                                <span class="text-amber-100"><strong>Base Solo Max Plus:</strong> Inclui macro e micronutrientes, textura e dinâmica de fósforo.</span>
+                            </div>
+                            <div class="flex items-start gap-2">
+                                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5"></i>
+                                <span><strong>Enzimas BioAS:</strong> Determinação de Arilsulfatase e Betaglicosidase.</span>
+                            </div>
+                            <div class="flex items-start gap-2">
+                                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5"></i>
+                                <span><strong>Indicadores IQS:</strong> IQS Biológico, IQS Químico e IQS Fertbio.</span>
+                            </div>
+                            <div class="flex items-start gap-2">
+                                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5"></i>
+                                <span><strong>Leitura integrada:</strong> Relação entre química, matéria orgânica, textura e atividade biológica.</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="addPackageToCart('BioAS Max Plus', 315.00)" class="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5">
+                        <i data-lucide="plus-circle" class="w-4 h-4"></i> Adicionar ao Orçamento
+                    </button>
+                </div>
+
+                <!-- 2º: Pacote Solo Max Plus (Recomendado 0-20) - AGORA EM SEGUNDO -->
+                <div class="glass-panel rounded-2xl p-6 flex flex-col justify-between border border-emerald-500/20 relative overflow-hidden group hover:-translate-y-1">
+                    <div class="absolute top-0 right-0 bg-emerald-500 text-black text-[10px] font-bold px-3 py-1 rounded-bl-xl tracking-wider uppercase flex items-center gap-1">
+                        <i data-lucide="check" class="w-3 h-3"></i> Profundidade: 0-20 cm
+                    </div>
+                    <div>
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-950/60 text-emerald-400 border border-emerald-500/20">PADRÃO OURO DE SOLO</span>
+                            <div class="text-right">
+                                <span class="text-[10px] text-gray-400 block">Preço Especial</span>
+                                <span class="text-2xl font-black text-white">R$ 180,00</span>
+                            </div>
+                        </div>
+                        <h4 class="text-xl font-extrabold text-emerald-50 mb-2">Solo Max Plus</h4>
+                        <p class="text-xs text-emerald-400/80 mb-5">O mapeamento químico mais avançado do mercado para alta produtividade e melhor resposta aos bioprodutos.</p>
+                        
+                        <div class="space-y-2.5 mb-8 text-xs text-gray-300 border-t border-emerald-500/10 pt-4">
+                            <div class="flex items-start gap-2">
+                                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5"></i>
+                                <span><strong>Fósforo Remanescente e Resina:</strong> Análise dupla de dinâmica de Fósforo.</span>
+                            </div>
+                            <div class="flex items-start gap-2">
+                                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5"></i>
+                                <span><strong>Macronutrientes Completos:</strong> P, K, Ca, Mg, Al.</span>
+                            </div>
+                            <div class="flex items-start gap-2">
+                                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5"></i>
+                                <span><strong>Micronutrientes Essenciais:</strong> Boro, Cobre, Ferro, Manganês, Zinco, Sódio.</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="addPackageToCart('Solo Max Plus', 180.00)" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white hover:text-black font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5">
+                        <i data-lucide="plus-circle" class="w-4 h-4"></i> Adicionar ao Orçamento
+                    </button>
+                </div>
+
+                <!-- 3º: Pacote Solo Básica + Enxofre (recomendado 20-40 cm) -->
+                <div class="glass-panel rounded-2xl p-6 flex flex-col justify-between border border-emerald-500/20 relative overflow-hidden group hover:-translate-y-1">
+                    <div class="absolute top-0 right-0 bg-emerald-800 text-emerald-100 text-[10px] font-bold px-3 py-1 rounded-bl-xl tracking-wider uppercase flex items-center gap-1">
+                        <i data-lucide="check" class="w-3 h-3"></i> Profundidade: 20-40 cm
+                    </div>
+                    <div>
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-950/60 text-emerald-400 border border-emerald-500/20">ESTRUTURAL & SUBSUPERFÍCIE</span>
+                            <div class="text-right">
+                                <span class="text-[10px] text-gray-400 block">Preço Especial</span>
+                                <span class="text-2xl font-black text-white">R$ 95,00</span>
+                            </div>
+                        </div>
+                        <h4 class="text-xl font-extrabold text-emerald-50 mb-2">Solo Básica + Enxofre</h4>
+                        <p class="text-xs text-emerald-400/80 mb-5">Análise balanceada sob medida para avaliar a saúde e as reservas da subsuperfície do solo.</p>
+                        
+                        <div class="space-y-2.5 mb-8 text-xs text-gray-300 border-t border-emerald-500/10 pt-4">
+                            <div class="flex items-start gap-2">
+                                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5"></i>
+                                <span><strong>Enxofre (S-SO₄):</strong> Crucial para o desenvolvimento e elongação radicular.</span>
+                            </div>
+                            <div class="flex items-start gap-2">
+                                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5"></i>
+                                <span><strong>Macronutrientes Básicos:</strong> P, K, Ca, Mg, Al.</span>
+                            </div>
+                            <div class="flex items-start gap-2">
+                                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5"></i>
+                                <span><strong>Parâmetros de Acidez:</strong> pH (H₂O), H+Al, CTC total, saturação por bases (V%).</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="addPackageToCart('Solo Básica + Enxofre', 95.00)" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white hover:text-black font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5">
+                        <i data-lucide="plus-circle" class="w-4 h-4"></i> Adicionar ao Orçamento
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- OUTRAS CATEGORIAS DE SERVIÇOS (ABAS INTERATIVAS) -->
+        <div class="space-y-6">
+            
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-emerald-500/10 pb-4">
+                <div>
+                    <h3 class="text-xl font-extrabold text-white">Catálogo Completo de Serviços</h3>
+                    <p class="text-xs text-gray-400">Navegue pelas demais categorias de análises em conformidade com a planilha de preços oficiais.</p>
+                </div>
+                
+                <!-- Barra de Busca Avançada -->
+                <div class="relative w-full md:w-80">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <i data-lucide="search" class="w-4 h-4 text-emerald-500/60"></i>
+                    </span>
+                    <input type="text" id="search-input" onkeyup="filterServices()" placeholder="Buscar elemento ou análise..." class="w-full pl-9 pr-4 py-2 bg-black/40 border border-emerald-500/20 rounded-xl focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none text-xs transition-all placeholder-gray-500 text-emerald-100">
+                </div>
+            </div>
+
+            <!-- Seletores (Abas) -->
+            <div class="flex flex-row overflow-x-auto gap-2 pb-2 scrollbar-none">
+                <button onclick="switchTab('solo')" id="tab-solo" class="tab-btn px-5 py-3 rounded-xl font-semibold text-xs flex items-center gap-2 transition-all duration-300 bg-emerald-500 text-black border border-emerald-400/30 shadow-lg shadow-emerald-500/10">
+                    <i data-lucide="sprout" class="w-4 h-4"></i>
+                    Análise de Solo
+                </button>
+                <button onclick="switchTab('folha')" id="tab-folha" class="tab-btn px-5 py-3 rounded-xl font-semibold text-xs flex items-center gap-2 transition-all duration-300 bg-zinc-900 hover:bg-zinc-800 text-gray-400 border border-transparent">
+                    <i data-lucide="leaf" class="w-4 h-4"></i>
+                    Tecido Foliar
+                </button>
+                <button onclick="switchTab('nutricao')" id="tab-nutricao" class="tab-btn px-5 py-3 rounded-xl font-semibold text-xs flex items-center gap-2 transition-all duration-300 bg-zinc-900 hover:bg-zinc-800 text-gray-400 border border-transparent">
+                    <i data-lucide="beef" class="w-4 h-4"></i>
+                    Nutrição Animal
+                </button>
+                <button onclick="switchTab('fertilizantes')" id="tab-fertilizantes" class="tab-btn px-5 py-3 rounded-xl font-semibold text-xs flex items-center gap-2 transition-all duration-300 bg-zinc-900 hover:bg-zinc-800 text-gray-400 border border-transparent">
+                    <i data-lucide="flask-conical" class="w-4 h-4"></i>
+                    Fertilizantes
+                </button>
+                <button onclick="switchTab('corretivos')" id="tab-corretivos" class="tab-btn px-5 py-3 rounded-xl font-semibold text-xs flex items-center gap-2 transition-all duration-300 bg-zinc-900 hover:bg-zinc-800 text-gray-400 border border-transparent">
+                    <i data-lucide="layers" class="w-4 h-4"></i>
+                    Corretivos
+                </button>
+                <button onclick="switchTab('biologicas')" id="tab-biologicas" class="tab-btn px-5 py-3 rounded-xl font-semibold text-xs flex items-center gap-2 transition-all duration-300 bg-zinc-900 hover:bg-zinc-800 text-gray-400 border border-transparent">
+                    <i data-lucide="microscope" class="w-4 h-4"></i>
+                    BioAS e Fitossanidade
+                </button>
+                <button onclick="switchTab('corrosao')" id="tab-corrosao" class="tab-btn px-5 py-3 rounded-xl font-semibold text-xs flex items-center gap-2 transition-all duration-300 bg-zinc-900 hover:bg-zinc-800 text-gray-400 border border-transparent">
+                    <i data-lucide="shield-alert" class="w-4 h-4"></i>
+                    Corrosão
+                </button>
+            </div>
+
+            <!-- CONTEÚDO DAS ABAS -->
+            <!-- Aba 1: Solo -->
+            <div id="content-solo" class="tab-content space-y-4">
+                <div class="glass-panel rounded-2xl p-6 border border-emerald-500/10">
+                    <h4 class="font-bold text-white text-sm mb-4 flex items-center gap-2">
+                        <i data-lucide="list-plus" class="text-emerald-400 w-4 h-4"></i>
+                        Análises de solo e recomendações
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="solo-list"></div>
+                </div>
+            </div>
+
+            <!-- Aba 2: Tecido Foliar -->
+            <div id="content-folha" class="tab-content hidden space-y-4">
+                <div class="glass-panel rounded-2xl p-6 border border-emerald-500/10">
+                    <h4 class="font-bold text-white text-sm mb-4 flex items-center gap-2">
+                        <i data-lucide="leaf" class="text-emerald-400 w-4 h-4"></i>
+                        Tecido vegetal, pecíolo e grãos
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="folha-list"></div>
+                </div>
+            </div>
+
+            <!-- Aba 3: Nutrição Animal -->
+            <div id="content-nutricao" class="tab-content hidden space-y-4">
+                <div class="glass-panel rounded-2xl p-6 border border-emerald-500/10">
+                    <h4 class="font-bold text-white text-sm mb-4 flex items-center gap-2">
+                        <i data-lucide="beef" class="text-emerald-400 w-4 h-4"></i>
+                        Sal mineral, sal proteinado e bromatologia
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="nutricao-list"></div>
+                </div>
+            </div>
+
+            <!-- Aba 4: Fertilizantes -->
+            <div id="content-fertilizantes" class="tab-content hidden space-y-4">
+                <div class="glass-panel rounded-2xl p-6 border border-emerald-500/10">
+                    <h4 class="font-bold text-white text-sm mb-4 flex items-center gap-2">
+                        <i data-lucide="flask-conical" class="text-emerald-400 w-4 h-4"></i>
+                        Adubos minerais, orgânicos e organominerais
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="fertilizantes-list"></div>
+                </div>
+            </div>
+
+            <!-- Aba 5: Corretivos Agrícolas -->
+            <div id="content-corretivos" class="tab-content hidden space-y-4">
+                <div class="glass-panel rounded-2xl p-6 border border-emerald-500/10">
+                    <h4 class="font-bold text-white text-sm mb-4 flex items-center gap-2">
+                        <i data-lucide="layers" class="text-emerald-400 w-4 h-4"></i>
+                        Calcário e gesso agrícola
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="corretivos-list"></div>
+                </div>
+            </div>
+
+            <!-- Aba 6: BioAS e Fitossanidade -->
+            <div id="content-biologicas" class="tab-content hidden space-y-4">
+                <div class="glass-panel rounded-2xl p-6 border border-emerald-500/10">
+                    <h4 class="font-bold text-white text-sm mb-4 flex items-center gap-2">
+                        <i data-lucide="microscope" class="text-emerald-400 w-4 h-4"></i>
+                        BioAS, nematoides, bactérias e fungos
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="biologicas-list"></div>
+                </div>
+            </div>
+
+            <!-- Aba 7: Corrosão -->
+            <div id="content-corrosao" class="tab-content hidden space-y-4">
+                <div class="glass-panel rounded-2xl p-6 border border-emerald-500/10">
+                    <h4 class="font-bold text-white text-sm mb-4 flex items-center gap-2">
+                        <i data-lucide="shield-alert" class="text-emerald-400 w-4 h-4"></i>
+                        Pacotes e determinações de corrosão
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="corrosao-list"></div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- FORMULÁRIO BÁSICO DE ENVIO DE AMOSTRAS COM SELEÇÃO INDIVIDUAL E QUANTIDADE -->
+        <section class="mt-16 relative">
+            <div class="absolute -inset-1 bg-gradient-to-r from-emerald-500/10 to-amber-500/10 rounded-3xl blur-2xl"></div>
+            <div class="relative glass-panel rounded-3xl p-8 border border-emerald-500/20">
+                
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 pb-6 border-b border-emerald-500/10">
+                    <div>
+                        <span class="px-3 py-1 rounded-full text-[10px] font-bold bg-emerald-950/60 border border-emerald-500/30 text-emerald-400 tracking-wider uppercase">Ficha Digital de Envio</span>
+                        <h3 class="text-2xl font-black text-white mt-1">Gerador e Envio de Proposta</h3>
+                        <p class="text-xs text-gray-400 mt-1">Insira os dados do produtor e monte sua sacola de análises para cotação rápida.</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="clearForm()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 text-gray-400 transition-all flex items-center gap-1.5">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i> Limpar Tudo
+                        </button>
+                        <button onclick="generateFicha()" class="px-5 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 text-black transition-all flex items-center gap-1.5 shadow-lg shadow-emerald-500/15">
+                            <i data-lucide="file-text" class="w-4 h-4"></i> Visualizar & Gerar PDF
+                        </button>
+                    </div>
+                </div>
+
+                <form id="submission-form" class="space-y-6" onsubmit="event.preventDefault();">
+                    
+                    <!-- Dados do Produtor / Empresa -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-400 mb-1.5 uppercase">Nome do Produtor / Empresa *</label>
+                            <input type="text" id="form-producer" required placeholder="Ex: João da Silva" class="w-full px-4 py-3 bg-black/40 border border-emerald-500/15 rounded-xl focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none text-xs text-white transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-400 mb-1.5 uppercase">Fazenda / Propriedade *</label>
+                            <input type="text" id="form-farm" required placeholder="Ex: Fazenda Bela Vista" class="w-full px-4 py-3 bg-black/40 border border-emerald-500/15 rounded-xl focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none text-xs text-white transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-400 mb-1.5 uppercase">Cidade & UF *</label>
+                            <input type="text" id="form-location" required placeholder="Ex: Rio Verde - GO" class="w-full px-4 py-3 bg-black/40 border border-emerald-500/15 rounded-xl focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none text-xs text-white transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-400 mb-1.5 uppercase">WhatsApp / Contato *</label>
+                            <input type="text" id="form-phone" required placeholder="Ex: (62) 99999-9999" class="w-full px-4 py-3 bg-black/40 border border-emerald-500/15 rounded-xl focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none text-xs text-white transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-400 mb-1.5 uppercase">E-mail para Laudos *</label>
+                            <input type="email" id="form-email" required placeholder="Ex: contato@fazenda.com.br" class="w-full px-4 py-3 bg-black/40 border border-emerald-500/15 rounded-xl focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none text-xs text-white transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-400 mb-1.5 uppercase">Nome do Vendedor / Representante *</label>
+                            <input type="text" id="form-seller" required placeholder="Ex: Marcos Souza" class="w-full px-4 py-3 bg-black/40 border border-emerald-500/15 rounded-xl focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none text-xs text-white transition-all">
+                        </div>
+                    </div>
+
+                    <!-- Configurações de Envio do Canal Regional -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-4 border-t border-emerald-500/5">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-400 mb-1.5 uppercase">Laboratório de Destino / Unidade *</label>
+                            <select id="form-destination-lab" class="w-full px-4 py-3 bg-black border border-emerald-500/15 rounded-xl focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none text-xs text-white transition-all">
+                                <option value="Goiás">Goiás - (62) 3261-4562</option>
+                                <option value="Bahia">Bahia - (77) 99860-4562</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-400 mb-1.5 uppercase">Cultura Principal</label>
+                            <input type="text" id="form-crop" placeholder="Ex: Soja" class="w-full px-4 py-3 bg-black/40 border border-emerald-500/15 rounded-xl focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none text-xs text-white transition-all">
+                        </div>
+                        <!-- Upload de croquis, mapas, arquivos -->
+                        <div>
+                            <label class="block text-xs font-bold text-gray-400 mb-1.5 uppercase">Anexar Documento (Croqui/Mapa)</label>
+                            <div class="relative border-2 border-dashed border-emerald-500/20 hover:border-emerald-500/50 rounded-xl p-2.5 text-center cursor-pointer transition-all bg-black/20" id="drop-zone" onclick="document.getElementById('form-file').click()">
+                                <input type="file" id="form-file" class="hidden" onchange="handleFileSelect(event)">
+                                <div class="flex items-center justify-center gap-2 text-gray-400">
+                                    <i data-lucide="upload-cloud" class="w-4 h-4 text-emerald-400"></i>
+                                    <span class="text-[11px]" id="file-status-text">Anexar arquivo</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ÁREA DE SELEÇÃO DINÂMICA DE ANÁLISES -->
+                    <div class="pt-6 border-t border-emerald-500/5">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                            <h4 class="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
+                                <i data-lucide="shopping-bag" class="w-4 h-4"></i> Sacola de Análises Selecionadas
+                            </h4>
+                            <!-- Busca para adicionar outros serviços -->
+                            <div class="relative w-full md:w-80">
+                                <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                    <i data-lucide="search" class="w-4 h-4 text-emerald-500/60"></i>
+                                </span>
+                                <input type="text" id="form-service-search" oninput="searchAndSuggestServices()" placeholder="Buscar e Adicionar Análise da Tabela..." class="w-full pl-9 pr-4 py-2 bg-black/50 border border-emerald-500/20 rounded-xl focus:border-emerald-500 outline-none text-xs text-white">
+                                <!-- Dropdown de sugestões -->
+                                <div id="search-suggestions" class="absolute left-0 right-0 mt-1 bg-zinc-950 border border-emerald-500/25 rounded-xl shadow-2xl max-h-48 overflow-y-auto z-30 hidden"></div>
+                            </div>
+                        </div>
+
+                        <!-- LISTA DE ANÁLISES NA SACOLA -->
+                        <div id="cart-container" class="border border-emerald-500/10 rounded-2xl p-4 bg-black/30 min-h-[100px] flex flex-col justify-center">
+                            <div id="cart-empty-state" class="text-center py-4 text-zinc-500 text-xs">
+                                <i data-lucide="package-open" class="w-8 h-8 mx-auto mb-2 text-zinc-600"></i>
+                                Nenhuma análise adicionada à sacola. Clique em "Adicionar ao Orçamento" nos pacotes acima ou pesquise na barra lateral.
+                            </div>
+                            <div id="cart-items-list" class="space-y-2 hidden">
+                                <!-- Gerado dinamicamente -->
+                            </div>
+                        </div>
+
+                        <!-- CUPOM DE DESCONTO E TOTALIZADOR -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 pt-4 border-t border-emerald-500/5 items-center">
+                            <!-- Cupom do Vendedor -->
+                            <div class="flex gap-2">
+                                <input type="text" id="coupon-input" placeholder="CUPOM DO VENDEDOR" class="w-full px-4 py-2.5 bg-black/40 border border-emerald-500/15 rounded-xl outline-none text-xs text-white uppercase font-bold tracking-widest focus:border-amber-500 transition-all">
+                                <button type="button" onclick="applyCoupon()" class="px-4 py-2.5 bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs rounded-xl transition-all">Aplicar</button>
+                            </div>
+                            <!-- Feedback Cupom -->
+                            <div id="coupon-feedback" class="text-xs font-semibold text-center md:text-left text-zinc-500">
+                                Nenhum cupom aplicado.
+                            </div>
+                            <!-- Preços e Resumo -->
+                            <div class="flex flex-col items-end justify-center p-3 rounded-xl bg-emerald-950/40 border border-emerald-500/20">
+                                <div class="flex justify-between w-full text-xs text-gray-400 mb-1">
+                                    <span>Subtotal:</span>
+                                    <span id="cart-subtotal">R$ 0,00</span>
+                                </div>
+                                <div id="cart-discount-row" class="justify-between w-full text-xs text-amber-400 mb-1 hidden">
+                                    <span>Desconto Cupom:</span>
+                                    <span id="cart-discount-val">R$ 0,00</span>
+                                </div>
+                                <div class="flex justify-between w-full text-sm font-bold text-white">
+                                    <span>Valor Estimado Final:</span>
+                                    <span class="text-emerald-400" id="cart-final-total">R$ 0,00</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Rodapé Institucional da Parceria -->
+    <footer class="container mx-auto px-4 mt-16 relative z-10 text-center max-w-4xl border-t border-emerald-500/10 pt-8">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-6 text-xs text-gray-500">
+            <div class="text-left space-y-1">
+                <p class="font-bold text-gray-400">Laboratório Solo e Companhia Ltda</p>
+                <p>CNPJ: 10.702.697/0001-04 | <span class="text-emerald-400 font-medium">Goiânia | Barreiras | Luis Eduardo Magalhães.</span></p>
+            </div>
+            <div class="text-right space-y-1">
+                <p class="font-bold text-gray-400">JCO Bioprodutos S.A.</p>
+                <p>Tecnologia em Bioprodutos para Alta Performance Agrícola</p>
+            </div>
+        </div>
+        <p class="text-[10px] text-zinc-600 mt-6 leading-relaxed">
+            As análises recomendadas e os valores descritos são referenciados sob os padrões estabelecidos no documento oficial <strong class="text-zinc-500">Tabela de Serviços e Preços - Solo e Companhia V2.xlsx</strong> em cooperação estratégica de pesquisa e desenvolvimento de campo.
+        </p>
+    </footer>
+
+    <!-- MODAL DE VISUALIZAÇÃO DA PROPOSTA / IMPRESSÃO -->
+    <div id="print-modal" class="fixed inset-0 bg-black/95 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white text-black w-full max-w-3xl rounded-2xl p-8 max-h-[90vh] overflow-y-auto relative shadow-2xl">
+            <!-- Botão de Fechar -->
+            <button onclick="closePrintModal()" class="absolute top-4 right-4 text-gray-500 hover:text-black print:hidden">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            
+            <!-- Conteúdo Exportável para PDF -->
+            <div id="print-content" class="p-4 bg-white text-black space-y-6">
+                <!-- Cabeçalho do Laudo/Remessa -->
+                <div class="flex justify-between items-center border-b pb-4">
+                    <div>
+                        <h2 class="text-xl font-bold uppercase tracking-tight text-emerald-800">Ficha de Remessa de Amostras</h2>
+                        <p class="text-xs text-gray-500">Parceria Solo e Companhia & JCO Bioprodutos</p>
+                    </div>
+                    <div class="text-right text-xs text-gray-600">
+                        <p><strong>Emissão:</strong> <span id="print-date">--/--/----</span></p>
+                        <p>Ref: Solo e Companhia V2</p>
+                    </div>
+                </div>
+
+                <!-- Dados do Produtor e Vendedor -->
+                <div class="grid grid-cols-2 gap-y-4 gap-x-6 text-xs border-b pb-4">
+                    <div>
+                        <p class="text-gray-500 font-semibold uppercase">Produtor / Empresa</p>
+                        <p class="font-bold text-sm" id="p-producer">--</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500 font-semibold uppercase">Fazenda / Propriedade</p>
+                        <p class="font-bold text-sm" id="p-farm">--</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500 font-semibold uppercase">Localização</p>
+                        <p class="font-bold text-sm" id="p-location">--</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500 font-semibold uppercase">Contato / WhatsApp</p>
+                        <p class="font-bold text-sm" id="p-phone">--</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500 font-semibold uppercase">E-mail de Cadastro</p>
+                        <p class="font-bold text-sm" id="p-email">--</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500 font-semibold uppercase">Vendedor / Representante</p>
+                        <p class="font-bold text-sm" id="p-seller">--</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500 font-semibold uppercase">Cultura Principal</p>
+                        <p class="font-bold text-sm" id="p-crop">--</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500 font-semibold uppercase">Arquivo Anexo</p>
+                        <p class="font-bold text-sm" id="p-file-name">Nenhum arquivo anexado</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500 font-semibold uppercase">Unidade Destinatária</p>
+                        <p class="font-bold text-sm" id="p-destination">--</p>
+                    </div>
+                </div>
+
+                <!-- Lista de Análises Solicitadas -->
+                <div>
+                    <p class="text-xs text-gray-500 mb-2 font-bold uppercase">Análises Solicitadas & Orçamento Estimado</p>
+                    <table class="w-full text-xs text-left border">
+                        <thead>
+                            <tr class="bg-gray-100 text-gray-700 border-b">
+                                <th class="p-2.5">Análise / Serviço Selecionado</th>
+                                <th class="p-2.5 text-center">Quantidade</th>
+                                <th class="p-2.5 text-right">Preço Unitário</th>
+                                <th class="p-2.5 text-right">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody id="p-analysis-table" class="divide-y">
+                            <!-- Inserido dinamicamente -->
+                        </tbody>
+                        <tfoot>
+                            <tr class="bg-gray-50 font-bold border-t">
+                                <td colspan="3" class="p-2.5 text-right">Subtotal Geral:</td>
+                                <td class="p-2.5 text-right text-gray-900" id="p-total-unit">R$ 0,00</td>
+                            </tr>
+                            <tr class="bg-amber-50 font-bold" id="p-discount-row" style="display:none;">
+                                <td colspan="3" class="p-2.5 text-right text-amber-900" id="p-discount-label">Desconto Aplicado:</td>
+                                <td class="p-2.5 text-right text-amber-900" id="p-discount-value">R$ 0,00</td>
+                            </tr>
+                            <tr class="bg-emerald-50 font-bold">
+                                <td colspan="3" class="p-2.5 text-right text-emerald-950">Orçamento Estimado Final:</td>
+                                <td class="p-2.5 text-right text-emerald-900 text-sm" id="p-total-multiplied">R$ 0,00</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <!-- Recomendação Técnica da Profundidade -->
+                <div class="bg-amber-50 border border-amber-200 p-4 rounded-xl text-xs text-amber-900">
+                    <strong>Recomendação Oficial Solo & JCO:</strong> Indicamos para profundidade de 0-20 cm a análise <strong>Solo Max Plus</strong> e para amostra de 20-40 cm a análise <strong>Solo Básica + Enxofre</strong>.
+                </div>
+
+                <!-- Termo e Assinatura -->
+                <div class="border-t pt-12 text-center text-xs text-gray-400 flex flex-col items-center justify-center gap-4">
+                    <div class="w-64 h-[1px] bg-gray-300"></div>
+                    <p>Assinatura do Produtor / Responsável Técnico</p>
+                </div>
+            </div>
+
+            <!-- Controles Adicionais do Modal -->
+            <div class="mt-8 flex flex-wrap gap-2 justify-end print:hidden">
+                <button onclick="sendToEmail()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-blue-100 hover:bg-blue-200 text-blue-800 transition-all flex items-center gap-1.5">
+                    <i data-lucide="mail" class="w-4 h-4"></i> Enviar por E-mail
+                </button>
+                <button onclick="sendToWhatsapp()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-100 hover:bg-emerald-200 text-emerald-800 transition-all flex items-center gap-1.5">
+                    <i data-lucide="message-square" class="w-4 h-4"></i> Enviar por WhatsApp
+                </button>
+                <button onclick="downloadPDF()" class="px-4 py-2 rounded-xl text-xs font-bold bg-zinc-900 hover:bg-zinc-800 text-white transition-all flex items-center gap-1.5 shadow-lg">
+                    <i data-lucide="download-cloud" class="w-4 h-4"></i> Baixar PDF Oficial
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts de Inteligência da Aplicação -->
+    <script>
+        // Banco de Dados oficial das análises conforme 'Tabela de Serviços e Preços - Solo e Companhia V2.xlsx'
+        const servicesDb = {
+          "solo": [
+            {
+                      "name": "Solo Básica",
+                      "price": 70,
+                      "details": "pH CaCl2, P (Mehlich), K, Ca, Mg, Al, Acidez Total, CTC, Índices de Saturação, Matéria Orgânica, C Orgânico, Relação de Bases, %Nutrientes na CTC; Teor de Argila, Silte e Areia"
+            },
+            {
+                      "name": "Solo Completa",
+                      "price": 135,
+                      "details": "pH CaCl2, P (Mehlich), K, Ca, Mg, Al, S, Acidez Total, CTC, Índices de Saturação, Matéria Orgânica, C Orgânico, Relação de Bases, %Nutrientes na CTC; B, Cu, Fe, Mn, Zn; Teor de Argila, Silte e Areia"
+            },
+            {
+                      "name": "Solo Max",
+                      "price": 155,
+                      "details": "pH CaCl2, P (Mehlich), K, Ca, Mg, Al, S, Acidez Total, CTC, Índices de Saturação, Matéria Orgânica, C Orgânico, Relação de Bases, %Nutrientes na CTC, P resina ou Remanescente; B, Cu, Fe, Mn, Zn; Teor de Argila, Silte e Areia"
+            },
+            {
+                      "name": "Solo Max Plus",
+                      "price": 180,
+                      "details": "pH CaCl2, pH H2O, P (Mehlich), P Remanescente, Níveis Críticos de P, S, Zn, P em Resina, K, Na, Ca, Mg, Al, H+Al, S, CTC, Índices de Saturação, Mat. Orgânica, C Orgânico, Relação de Bases, %Nutrientes na CTC; B, Cu, Fe, Mn, Zn; Teor de Argila, Silte e Areia"
+            },
+            {
+                      "name": "Básica s/ Textura + Enxofre",
+                      "price": 85,
+                      "details": "Macronutrientes, S"
+            },
+            {
+                      "name": "Solo Básica + Enxofre",
+                      "price": 95,
+                      "details": "Macronutrientes, S, Micronutrientes"
+            },
+            {
+                      "name": "Solo Básica + Pres",
+                      "price": 100,
+                      "details": "Macronutrientes, Textura, P Resina"
+            },
+            {
+                      "name": "Completa s/ Textura",
+                      "price": 100,
+                      "details": "Macronutrientes, S, Micronutrientes, Prem ou Pres"
+            },
+            {
+                      "name": "Completa s/ Textura + Prem ou Pres",
+                      "price": 130,
+                      "details": "Macronutrientes, S, Micronutrientes, Prem ou Pres"
+            },
+            {
+                      "name": "Laudo Interpretado",
+                      "price": 25,
+                      "details": "Laudo com gráficos comparativos de outros anos"
+            },
+            {
+                      "name": "Sugestão de Adubação e Calagem",
+                      "price": 100,
+                      "details": "Sugestão de adubação e calagem para até 5 amostras. Obs.: 1 sugestão por cultura."
+            }
+          ],
+          "folha": [
+            {
+                      "name": "Foliar Completa s/ Boro",
+                      "price": 110,
+                      "details": "N, P, K, Ca, Mg, S; Cu, Fe, Mn, Zn"
+            },
+            {
+                      "name": "Foliar Completa",
+                      "price": 135,
+                      "details": "N, P, K, Ca, Mg, S; Cu, Fe, Mn, Zn, B"
+            },
+            {
+                      "name": "Foliar Completa c/ DRIS",
+                      "price": 160,
+                      "details": "P, K, Ca, Mg, S; Cu, Fe, Mn, Zn, B; Avaliação Nutricional (DRIS)"
+            },
+            {
+                      "name": "Foliar (Planta Inteira)",
+                      "price": 180,
+                      "details": "P, K, Ca, Mg, S; Cu, Fe, Mn, Zn, B; Material Seca, Peso Planta"
+            },
+            {
+                      "name": "Pecíolo Completa",
+                      "price": 150,
+                      "details": "P, K, Ca, Mg, S; Cu, Fe, Mn, Zn, B; Resultado Interpretado"
+            },
+            {
+                      "name": "Análise de Grãos",
+                      "price": 170,
+                      "details": "P, K, Ca, Mg, S; Cu, Fe, Mn, Zn, B; Proteína Bruta, Extrato Etéreo (Óleo)"
+            }
+          ],
+          "nutricao": [
+            {
+                      "name": "Sal Mineral Básica",
+                      "price": 190,
+                      "details": "N, P, Ca, K, Na"
+            },
+            {
+                      "name": "Sal Mineral Completo",
+                      "price": 300,
+                      "details": "N, P, P em Ácido Cítrico (Solubilidade), K, Na, Ca, Mg, Cu, Fe, Mn, Zn"
+            },
+            {
+                      "name": "Sal Proteinado",
+                      "price": 420,
+                      "details": "N, P, P em Ácido Cítrico (Solubilidade), K, Na, Ca, Mg, Cu, Fe, Mn, Zn"
+            },
+            {
+                      "name": "Bromatológica Básica",
+                      "price": 140,
+                      "details": "Umidade, Proteína Bruta, Extrato Etéreo, Ca, P"
+            },
+            {
+                      "name": "Bromatológica Completa",
+                      "price": 200,
+                      "details": "Umidade, Proteína Bruta, Fibra Bruta, Extrato Etéreo, Cinzas (Mat. Mineral), Ca, P, Nutrientes Digestíveis Totais, Extrato Não Nitrogenado"
+            },
+            {
+                      "name": "Bromatológica Max Plus",
+                      "price": 300,
+                      "details": "Umidade, Proteína Bruta, Fibra Bruta, Extrato Etéreo, Cinzas, Ca, P, NDT, Extrato Não Nitrogenado, FDN, FDA"
+            }
+          ],
+          "fertilizantes": [
+            {
+                      "name": "Adubo Mineral Básica",
+                      "price": 125,
+                      "details": "N, P, K"
+            },
+            {
+                      "name": "Adubo Mineral Completa",
+                      "price": 280,
+                      "details": "N, P CNA, K, Ca, Mg, S, B, Cu, Fe, Mn, Zn"
+            },
+            {
+                      "name": "Adubo Mineral Max Plus",
+                      "price": 340,
+                      "details": "N, P CNA, P em Ac. Cítrico, K, Ca, Mg, S, B, Cu, Fe, Mn, Zn, Análise de Granulometria"
+            },
+            {
+                      "name": "Adubo Organomineral Max Plus",
+                      "price": 500,
+                      "details": "N, P Total, P CNA, P em Ac. Cítrico, P em Água, K, K em Água, Mg, S, B Total, B em Ácido Cítrico, Cu, Fe, Mn, Zn, Matéria Orgânica"
+            },
+            {
+                      "name": "Adubo Orgânico Básica",
+                      "price": 140,
+                      "details": "N, P, K, Matéria Orgânica, Umidade, Material Mineral"
+            },
+            {
+                      "name": "Adubo Orgânico Completo",
+                      "price": 300,
+                      "details": "N, P CNA, K, Ca, Mg, S, B, Cu, Fe, Mn, Zn, Matéria Orgânica, C Orgânico, Umidade"
+            },
+            {
+                      "name": "Adubo Orgânico Max Plus",
+                      "price": 370,
+                      "details": "N, P CNA, K, Ca, Mg, S, B, Cu, Fe, Mn, Zn, Matéria Orgânica, C Orgânico, Umidade, CTC, pH, Relação C/N, Extratos Húmicos e Fúlvicos, Granulometria"
+            }
+          ],
+          "corretivos": [
+            {
+                      "name": "Calcário Básico",
+                      "price": 70,
+                      "details": "CaO, MgO, PN, PRNT, Granulometria"
+            },
+            {
+                      "name": "Calcário Completa",
+                      "price": 130,
+                      "details": "CaO, MgO, PN, PRNT, Granulometria, Umidade, Insolúveis, Sílica e RI"
+            },
+            {
+                      "name": "Gesso Agrícola",
+                      "price": 70,
+                      "details": "S, Ca, Umidade"
+            }
+          ],
+          "biologicas": [
+            {
+                      "name": "BioAS Básica",
+                      "price": 215,
+                      "details": "pH CaCl2, P (Mehlich), K, Na, Ca, Mg, Al, H+Al, S, CTC, Índices de Saturação, Mat. Orgânica, C Orgânico, Relação de Bases, Nutrientes na CTC; Teor de Argila, Silte e Areia; Enzimas Arilsulfatase, Betaglicosidase, IQS Biológico, IQS Químico, IQS Fertbio"
+            },
+            {
+                      "name": "BioAS Completa",
+                      "price": 265,
+                      "details": "pH CaCl2, P (Mehlich), K, Na, Ca, Mg, Al, H+Al, S, CTC, Índices de Saturação, Mat. Orgânica, C Orgânico, Relação de Bases, Nutrientes na CTC; B, Cu, Fe, Mn, Zn; Teor de Argila, Silte e Areia; Enzimas Arilsulfatase, Betaglicosidase, IQS Biológico, IQS Químico, IQS Fertbio"
+            },
+            {
+                      "name": "BioAS Max",
+                      "price": 280,
+                      "details": "pH CaCl2, pH H2O, P (Mehlich), K, Na, Ca, Mg, Al, Acidez Total, S, CTC, Índices de Saturação, Mat. Orgânica, C Orgânico, Relação de Bases, Nutrientes na CTC, P Remanescente ou Resina; B, Cu, Fe, Mn, Zn; Teor de Argila, Silte e Areia; Enzimas Arilsulfatase, Betaglicosidase, IQS Biológico, IQS Químico, IQS Fertbio"
+            },
+            {
+                      "name": "BioAS Max Plus",
+                      "price": 315,
+                      "details": "pH CaCl2, pH H2O, P (Mehlich), P Remanescente, Níveis Críticos de P, S, Zn, P em Resina, K, Na, Ca, Mg, Al, Acidez Total, S, CTC, Índices de Saturação, Mat. Orgânica, C Orgânico, Relação de Bases, Nutrientes na CTC; B, Cu, Fe, Mn, Zn; Teor de Argila, Silte e Areia; Determinação Arilsulfatase, Betaglicosidase, IQS Biológico, IQS Químico, IQS Fertbio"
+            },
+            {
+                      "name": "BioAS Enzimática",
+                      "price": 160,
+                      "details": "Matéria Orgânica; Teor de Argila, Silte e Areia; Enzimas Arilsulfatase, Betaglicosidase, IQS Biológico"
+            },
+            {
+                      "name": "Nematoides Solo e Raiz",
+                      "price": 140,
+                      "details": "Nematoides + Contagem de Cisto Solo ou Raiz"
+            },
+            {
+                      "name": "Nematoides + Raça",
+                      "price": 1400,
+                      "details": "Identificação de Nematoides + Determinação de Raça"
+            },
+            {
+                      "name": "Determinação de Raça",
+                      "price": 1300,
+                      "details": "Diferenciação de Espécie"
+            },
+            {
+                      "name": "Erwinia - Bactéria",
+                      "price": 230,
+                      "details": "Identificação da bactéria Erwinia"
+            },
+            {
+                      "name": "Contagem de Cisto",
+                      "price": 80,
+                      "details": "Contagem de Cistos (Solo ou Raiz)"
+            },
+            {
+                      "name": "Combo de Fungos",
+                      "price": 460,
+                      "details": "Fusarium sp + Rhizoctonia sp + Macrophornina phaleolina (Solo ou Raiz)"
+            }
+          ],
+          "corrosao": [
+            {
+                      "name": "Corrosão PACOTE 1",
+                      "price": 365,
+                      "details": "Potencial de Corrosão (pH H2O, H+Al (Acidez), S (Sulfatos), Cond. Elétrica, Porosidade, Granulometria, Permeabilidade)"
+            },
+            {
+                      "name": "Corrosão PACOTE 2",
+                      "price": 430,
+                      "details": "Potencial de Corrosão + Densidade + C Orgânico (pH H2O, H+Al (Acidez), S (Sulfatos), Cond. Elétrica, Porosidade, Granulometria, Permeabilidade)"
+            },
+            {
+                      "name": "Corrosão PACOTE 3",
+                      "price": 470,
+                      "details": "Potencial de Corrosão + Densidade + C Orgânico (pH H2O, H+Al (Acidez), S (Sulfatos), Cond. Elétrica, Porosidade, Granulometria, Permeabilidade, CTC)"
+            },
+            {
+                      "name": "Corrosão PACOTE 4",
+                      "price": 495,
+                      "details": "Potencial de Corrosão + Densidade + C Orgânico + Areias (pH H2O, H+Al (Acidez), S (Sulfatos), Cond. Elétrica, Porosidade, Granulometria, Permeabilidade, Areia Fina, Areia Grossa)"
+            },
+            {
+                      "name": "Corrosão PACOTE 5",
+                      "price": 220,
+                      "details": "Densidade + Porosidade + Permeabilidade + CTC + Granulometria (Ca+Mg+K)"
+            },
+            {
+                      "name": "Corrosão PACOTE 6",
+                      "price": 180,
+                      "details": "Densidade + Porosidade + Permeabilidade + Granulometria"
+            },
+            {
+                      "name": "Corrosão Determinação Isolada",
+                      "price": 50,
+                      "details": "Id Amostra + Determinação"
+            }
+          ]
+};
+
+        // Estado Global da Aplicação
+        let selectedFile = null;
+        let cartItems = [];
+        let couponDiscountPercent = 0;
+        let appliedCouponCode = "";
+
+        // Base preparada para habilitar cupons por vendedor.
+        // Preencha `sellers` usando a chave gerada por normalizeSellerName(nomeDoVendedor).
+        const sellerCouponDatabase = {
+            global: [],
+            sellers: {}
+        };
+
+        // Inicialização
+        window.addEventListener('DOMContentLoaded', () => {
+            renderAllServiceLists();
+            lucide.createIcons();
+            document.getElementById('print-date').innerText = new Date().toLocaleDateString('pt-BR');
+            setupDragAndDrop();
+        });
+
+        // Função para Renderizar todas as tabelas dinamicamente
+        function renderAllServiceLists() {
+            Object.keys(servicesDb).forEach(category => {
+                const container = document.getElementById(`${category}-list`);
+                if (!container) return;
+
+                container.innerHTML = servicesDb[category].map(srv => `
+                    <div class="service-item-card flex flex-col justify-between p-4 bg-black/40 hover:bg-emerald-950/10 border border-emerald-500/10 rounded-xl transition-all duration-300">
+                        <div>
+                            <div class="flex justify-between items-start gap-4 mb-2">
+                                <h5 class="text-xs font-bold text-emerald-100 flex items-center gap-1.5 leading-snug">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    ${srv.name}
+                                </h5>
+                                <span class="text-xs font-black text-emerald-300 bg-emerald-950/60 border border-emerald-500/15 px-2.5 py-0.5 rounded-md whitespace-nowrap">R$ ${srv.price.toFixed(2).replace('.', ',')}</span>
+                            </div>
+                            <p class="text-[11px] text-gray-400 leading-relaxed mb-4">${srv.details}</p>
+                        </div>
+                        <button onclick="addPackageToCart('${srv.name}', ${srv.price})" type="button" class="w-full py-1.5 bg-emerald-950/50 hover:bg-emerald-500 border border-emerald-500/20 hover:text-black text-emerald-300 font-bold text-[10px] rounded-lg transition-all flex items-center justify-center gap-1">
+                            <i data-lucide="plus" class="w-3.5 h-3.5"></i> Incluir na Proposta
+                        </button>
+                    </div>
+                `).join('');
+            });
+        }
+
+        // Alterar Abas
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`content-${tabId}`).classList.remove('hidden');
+
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.className = "tab-btn px-5 py-3 rounded-xl font-semibold text-xs flex items-center gap-2 transition-all duration-300 bg-zinc-900 hover:bg-zinc-800 text-gray-400 border border-transparent";
+            });
+
+            const activeBtn = document.getElementById(`tab-${tabId}`);
+            if (activeBtn) {
+                activeBtn.className = "tab-btn px-5 py-3 rounded-xl font-semibold text-xs flex items-center gap-2 transition-all duration-300 bg-emerald-500 text-black border border-emerald-400/30 shadow-lg shadow-emerald-500/10";
+            }
+        }
+
+        // Filtro de Busca Avançado em Tempo Real
+        function filterServices() {
+            const term = document.getElementById('search-input').value.toLowerCase();
+            const cards = document.querySelectorAll('.service-item-card');
+            
+            cards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                if (text.includes(term)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Área de Drag and Drop de Arquivo
+        function setupDragAndDrop() {
+            const dropZone = document.getElementById('drop-zone');
+            
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    dropZone.classList.add('border-emerald-500', 'bg-emerald-950/20');
+                }, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    dropZone.classList.remove('border-emerald-500', 'bg-emerald-950/20');
+                }, false);
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                if (files.length) {
+                    processFile(files[0]);
+                }
+            });
+        }
+
+        function handleFileSelect(event) {
+            const files = event.target.files;
+            if (files.length) {
+                processFile(files[0]);
+            }
+        }
+
+        function processFile(file) {
+            selectedFile = file;
+            const statusText = document.getElementById('file-status-text');
+            statusText.innerHTML = `<span class="text-emerald-400 font-bold">${file.name}</span> (${(file.size/1024).toFixed(1)} KB)`;
+        }
+
+        // Autocomplete de Busca de Outras Análises no Formulário
+        function searchAndSuggestServices() {
+            const query = document.getElementById('form-service-search').value.toLowerCase();
+            const suggestionsBox = document.getElementById('search-suggestions');
+            
+            if (!query) {
+                suggestionsBox.classList.add('hidden');
+                return;
+            }
+
+            // Unificar todos os serviços das categorias
+            const allServices = [];
+            Object.keys(servicesDb).forEach(cat => {
+                servicesDb[cat].forEach(srv => {
+                    allServices.push(srv);
+                });
+            });
+
+            // Filtrar itens que batem com a query e não estão no carrinho
+            const filtered = allServices.filter(srv => 
+                srv.name.toLowerCase().includes(query) && 
+                !cartItems.some(c => c.name === srv.name)
+            );
+
+            if (filtered.length === 0) {
+                suggestionsBox.innerHTML = `<div class="p-3 text-xs text-zinc-500 text-center">Nenhum serviço correspondente encontrado</div>`;
+            } else {
+                suggestionsBox.innerHTML = filtered.map(srv => `
+                    <div onclick="addPackageToCart('${srv.name}', ${srv.price})" class="p-3 text-xs text-zinc-300 hover:bg-emerald-950/40 hover:text-white cursor-pointer border-b border-zinc-800 flex justify-between items-center transition-all">
+                        <div>
+                            <p class="font-bold text-white">${srv.name}</p>
+                            <p class="text-[10px] text-zinc-400">${srv.details.substring(0, 80)}...</p>
+                        </div>
+                        <span class="text-emerald-400 font-extrabold whitespace-nowrap pl-4">R$ ${srv.price.toFixed(2).replace('.', ',')}</span>
+                    </div>
+                `).join('');
+            }
+            suggestionsBox.classList.remove('hidden');
+        }
+
+        // GERENCIADOR DE CARRINHO (SACOLA DE ANÁLISES COM QUANTIDADES INDIVIDUAIS)
+        function addPackageToCart(name, price) {
+            // Verificar se já existe na sacola
+            const existing = cartItems.find(item => item.name === name);
+            if (existing) {
+                existing.quantity++;
+            } else {
+                cartItems.push({ name, price, quantity: 1 });
+            }
+            
+            // Ocultar sugestões caso venha da barra de busca do formulário
+            document.getElementById('form-service-search').value = '';
+            document.getElementById('search-suggestions').classList.add('hidden');
+            
+            updateCartUI();
+        }
+
+        function updateCartQuantity(index, increment) {
+            cartItems[index].quantity += increment;
+            if (cartItems[index].quantity < 1) {
+                cartItems.splice(index, 1);
+            }
+            updateCartUI();
+        }
+
+        function removeCartItem(index) {
+            cartItems.splice(index, 1);
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const emptyState = document.getElementById('cart-empty-state');
+            const itemsList = document.getElementById('cart-items-list');
+            
+            if (cartItems.length === 0) {
+                emptyState.classList.remove('hidden');
+                itemsList.classList.add('hidden');
+                itemsList.innerHTML = '';
+                calculateCartTotals();
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            itemsList.classList.remove('hidden');
+
+            itemsList.innerHTML = cartItems.map((item, idx) => `
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 bg-black/40 border border-emerald-500/10 rounded-xl gap-3">
+                    <div class="flex-1">
+                        <p class="text-xs font-bold text-white">${item.name}</p>
+                        <p class="text-[10px] text-zinc-500">Valor Unitário: R$ ${item.price.toFixed(2).replace('.', ',')}</p>
+                    </div>
+                    <div class="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
+                        <!-- Seletor de Quantidade -->
+                        <div class="flex items-center gap-1.5 bg-zinc-950 border border-zinc-800 rounded-lg p-1">
+                            <button onclick="updateCartQuantity(${idx}, -1)" type="button" class="w-6 h-6 flex items-center justify-center text-zinc-400 hover:text-white hover:bg-zinc-900 rounded transition-colors">-</button>
+                            <span class="w-8 text-center text-xs font-bold text-white">${item.quantity}</span>
+                            <button onclick="updateCartQuantity(${idx}, 1)" type="button" class="w-6 h-6 flex items-center justify-center text-zinc-400 hover:text-white hover:bg-zinc-900 rounded transition-colors">+</button>
+                        </div>
+                        <!-- Preço Total do Item -->
+                        <div class="text-right whitespace-nowrap min-w-[80px]">
+                            <span class="text-xs font-bold text-emerald-400">R$ ${(item.price * item.quantity).toFixed(2).replace('.', ',')}</span>
+                        </div>
+                        <!-- Botão de Remover -->
+                        <button onclick="removeCartItem(${idx})" type="button" class="text-zinc-600 hover:text-red-400 transition-colors">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            lucide.createIcons();
+            calculateCartTotals();
+        }
+
+        function normalizeCouponCode(value) {
+            return String(value || '')
+                .trim()
+                .toUpperCase()
+                .replace(/\s+/g, '');
+        }
+
+        function normalizeSellerName(value) {
+            return String(value || '')
+                .trim()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toUpperCase()
+                .replace(/[^A-Z0-9]+/g, ' ')
+                .trim();
+        }
+
+        function resetCouponState(feedback) {
+            couponDiscountPercent = 0;
+            appliedCouponCode = "";
+            feedback.className = "text-xs font-semibold text-center md:text-left text-zinc-500";
+            feedback.innerHTML = "Nenhum cupom aplicado.";
+        }
+
+        function findSellerCoupon(code, sellerName) {
+            const sellerKey = normalizeSellerName(sellerName);
+            const sellerCoupons = sellerCouponDatabase.sellers[sellerKey] || [];
+            const availableCoupons = [...sellerCouponDatabase.global, ...sellerCoupons];
+
+            return availableCoupons.find(coupon => {
+                return coupon.active === true && normalizeCouponCode(coupon.code || '') === code;
+            });
+        }
+
+        // Sistema de cupons preparado para ativação por vendedor
+        function applyCoupon() {
+            const input = normalizeCouponCode(document.getElementById('coupon-input').value);
+            const feedback = document.getElementById('coupon-feedback');
+            const sellerName = document.getElementById('form-seller').value;
+            
+            if (input === '') {
+                resetCouponState(feedback);
+                calculateCartTotals();
+                return;
+            }
+
+            const coupon = findSellerCoupon(input, sellerName);
+
+            if (!coupon) {
+                resetCouponState(feedback);
+                feedback.className = "text-xs font-semibold text-center md:text-left text-amber-400";
+                feedback.innerHTML = "Cupom não aplicado.";
+                calculateCartTotals();
+                return;
+            }
+
+            const discountPercent = Number(coupon.discountPercent);
+
+            if (!Number.isFinite(discountPercent) || discountPercent <= 0) {
+                resetCouponState(feedback);
+                feedback.className = "text-xs font-semibold text-center md:text-left text-amber-400";
+                feedback.innerHTML = "Cupom não aplicado.";
+                calculateCartTotals();
+                return;
+            }
+
+            couponDiscountPercent = discountPercent;
+            appliedCouponCode = `${input} (${discountPercent}%)`;
+            feedback.className = "text-xs font-bold text-center md:text-left text-emerald-400";
+            feedback.innerHTML = `<i data-lucide="badge-check" class="w-4 h-4 inline mr-1"></i> Cupom aplicado. ${discountPercent}% de desconto.`;
+
+            lucide.createIcons();
+            calculateCartTotals();
+        }
+
+        function calculateCartTotals() {
+            let subtotal = 0;
+            cartItems.forEach(item => {
+                subtotal += item.price * item.quantity;
+            });
+
+            const discountVal = subtotal * (couponDiscountPercent / 100);
+            const finalTotal = subtotal - discountVal;
+
+            document.getElementById('cart-subtotal').innerText = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
+            
+            const discountRow = document.getElementById('cart-discount-row');
+            if (couponDiscountPercent > 0) {
+                discountRow.classList.remove('hidden');
+                discountRow.classList.add('flex');
+                document.getElementById('cart-discount-val').innerText = `- R$ ${discountVal.toFixed(2).replace('.', ',')}`;
+            } else {
+                discountRow.classList.add('hidden');
+                discountRow.classList.remove('flex');
+            }
+
+            document.getElementById('cart-final-total').innerText = `R$ ${finalTotal.toFixed(2).replace('.', ',')}`;
+        }
+
+        // Limpar Dados
+        function clearForm() {
+            document.getElementById('submission-form').reset();
+            selectedFile = null;
+            cartItems = [];
+            couponDiscountPercent = 0;
+            appliedCouponCode = "";
+            document.getElementById('file-status-text').innerHTML = 'Anexar arquivo';
+            document.getElementById('coupon-feedback').className = "text-xs font-semibold text-center md:text-left text-zinc-500";
+            document.getElementById('coupon-feedback').innerHTML = "Nenhum cupom aplicado.";
+            updateCartUI();
+        }
+
+        // Lógica do Formulário de Envio de Amostras
+        function generateFicha() {
+            const form = document.getElementById('submission-form');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            if (cartItems.length === 0) {
+                // Alerta caso não tenha adicionado nenhum item
+                alert("Por favor, adicione pelo menos 1 serviço ou pacote na sua sacola de análises antes de prosseguir!");
+                return;
+            }
+
+            // Mapear dados do formulário para o modal
+            document.getElementById('p-producer').innerText = document.getElementById('form-producer').value;
+            document.getElementById('p-farm').innerText = document.getElementById('form-farm').value;
+            document.getElementById('p-location').innerText = document.getElementById('form-location').value;
+            document.getElementById('p-phone').innerText = document.getElementById('form-phone').value;
+            document.getElementById('p-email').innerText = document.getElementById('form-email').value;
+            document.getElementById('p-seller').innerText = document.getElementById('form-seller').value;
+            document.getElementById('p-crop').innerText = document.getElementById('form-crop').value || 'Não informada';
+            
+            const destLab = document.getElementById('form-destination-lab').value;
+            document.getElementById('p-destination').innerText = destLab === 'Goiás' ? 'Goiânia - GO' : 'Luis Eduardo Magalhães - BA';
+            
+            // Exibir arquivo
+            if (selectedFile) {
+                document.getElementById('p-file-name').innerText = selectedFile.name;
+            } else {
+                document.getElementById('p-file-name').innerText = 'Nenhum arquivo anexado';
+            }
+
+            // Listar Análises Solicitadas no PDF
+            const tableBody = document.getElementById('p-analysis-table');
+            let subtotalGeral = 0;
+
+            tableBody.innerHTML = cartItems.map(item => {
+                const itemSubtotal = item.price * item.quantity;
+                subtotalGeral += itemSubtotal;
+                return `
+                    <tr class="border-b">
+                        <td class="p-2.5 font-medium">${item.name}</td>
+                        <td class="p-2.5 text-center font-bold">${item.quantity}</td>
+                        <td class="p-2.5 text-right font-semibold">R$ ${item.price.toFixed(2).replace('.', ',')}</td>
+                        <td class="p-2.5 text-right font-bold text-emerald-800">R$ ${itemSubtotal.toFixed(2).replace('.', ',')}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            const discountVal = subtotalGeral * (couponDiscountPercent / 100);
+            const totalComDesconto = subtotalGeral - discountVal;
+
+            document.getElementById('p-total-unit').innerText = `R$ ${subtotalGeral.toFixed(2).replace('.', ',')}`;
+            
+            const discountRow = document.getElementById('p-discount-row');
+            if (couponDiscountPercent > 0) {
+                discountRow.style.display = 'table-row';
+                document.getElementById('p-discount-label').innerText = `Desconto Aplicado (Cupom: ${appliedCouponCode}):`;
+                document.getElementById('p-discount-value').innerText = `- R$ ${discountVal.toFixed(2).replace('.', ',')}`;
+            } else {
+                discountRow.style.display = 'none';
+            }
+
+            document.getElementById('p-total-multiplied').innerText = `R$ ${totalComDesconto.toFixed(2).replace('.', ',')}`;
+
+            // Exibir Modal
+            document.getElementById('print-modal').classList.remove('hidden');
+        }
+
+        function closePrintModal() {
+            document.getElementById('print-modal').classList.add('hidden');
+        }
+
+        // Geração de PDF Oficial usando html2pdf.js
+        function downloadPDF() {
+            const element = document.getElementById('print-content');
+            const producerName = document.getElementById('p-producer').innerText.replace(/\s+/g, '_');
+            
+            const opt = {
+                margin:       10,
+                filename:     `Ficha_Amostras_SoloCia_${producerName}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(element).save();
+        }
+
+        // Envio estruturado por WhatsApp
+        function sendToWhatsapp() {
+            const destLab = document.getElementById('form-destination-lab').value;
+            // Definir número de WhatsApp correto de acordo com a unidade selecionada
+            const targetPhone = destLab === 'Goiás' ? '556232614562' : '5577998604562';
+
+            const producer = document.getElementById('p-producer').innerText;
+            const farm = document.getElementById('p-farm').innerText;
+            const location = document.getElementById('p-location').innerText;
+            const phone = document.getElementById('p-phone').innerText;
+            const email = document.getElementById('p-email').innerText;
+            const seller = document.getElementById('p-seller').innerText;
+            const crop = document.getElementById('p-crop').innerText;
+            const subtotalStr = document.getElementById('p-total-unit').innerText;
+            const finalTotalStr = document.getElementById('p-total-multiplied').innerText;
+
+            let text = `*SOLICITAÇÃO DE ORÇAMENTO - PARCERIA SOLO & JCO*\n\n`;
+            text += `*Produtor/Empresa:* ${producer}\n`;
+            text += `*Fazenda:* ${farm}\n`;
+            text += `*Localização:* ${location}\n`;
+            text += `*WhatsApp:* ${phone}\n`;
+            text += `*E-mail:* ${email}\n`;
+            text += `*Vendedor/Representante:* ${seller}\n`;
+            text += `*Cultura Principal:* ${crop}\n\n`;
+            text += `*ANÁLISES SOLICITADAS:*\n`;
+
+            cartItems.forEach(item => {
+                text += `- ${item.name} | Qtd: ${item.quantity} | Total: R$ ${(item.price * item.quantity).toFixed(2).replace('.', ',')}\n`;
+            });
+
+            if (couponDiscountPercent > 0) {
+                text += `\n*Cupom Aplicado:* ${appliedCouponCode}\n`;
+            }
+
+            text += `\n*Subtotal:* ${subtotalStr}\n`;
+            text += `*Valor Estimado Total:* ${finalTotalStr}\n\n`;
+            text += `_Ficha gerada via Tabela de Serviços e Preços - Solo e Companhia V2._`;
+
+            const encodedText = encodeURIComponent(text);
+            const url = `https://wa.me/${targetPhone}?text=${encodedText}`;
+            window.open(url, '_blank');
+        }
+
+        // Envio estruturado por E-mail
+        function sendToEmail() {
+            const emailDest = "comercial@soloecia.com.br";
+            const producer = document.getElementById('p-producer').innerText;
+            const farm = document.getElementById('p-farm').innerText;
+            const location = document.getElementById('p-location').innerText;
+            const seller = document.getElementById('p-seller').innerText;
+            const finalTotalStr = document.getElementById('p-total-multiplied').innerText;
+
+            const subject = encodeURIComponent(`Solicitação de Amostras - Parceria Solo & JCO - ${producer}`);
+            
+            let bodyText = `Olá Equipe Comercial do Laboratório Solo e Companhia,\n\n`;
+            bodyText += `Seguem abaixo os detalhes da ficha de envio de amostras gerada pelo simulador oficial:\n\n`;
+            bodyText += `Produtor: ${producer}\n`;
+            bodyText += `Fazenda: ${farm}\n`;
+            bodyText += `Cidade/UF: ${location}\n`;
+            bodyText += `Representante/Vendedor JCO: ${seller}\n\n`;
+            bodyText += `ANÁLISES DA SACOLA:\n`;
+
+            cartItems.forEach(item => {
+                bodyText += `- ${item.name} (Qtd: ${item.quantity}) - Total: R$ ${(item.price * item.quantity).toFixed(2).replace('.', ',')}\n`;
+            });
+
+            if (couponDiscountPercent > 0) {
+                bodyText += `\nCupom Vendedor Aplicado: ${appliedCouponCode}\n`;
+            }
+
+            bodyText += `\nValor Estimado Final: ${finalTotalStr}\n\n`;
+            bodyText += `Por favor, aguardo o retorno comercial com as orientações de logística e faturamento.\n\n`;
+            bodyText += `Atenciosamente,\n${producer}`;
+
+            const encodedBody = encodeURIComponent(bodyText);
+            const mailtoUrl = `mailto:${emailDest}?subject=${subject}&body=${encodedBody}`;
+            window.open(mailtoUrl, '_blank');
+        }
+    </script>
+</body>
+</html>
