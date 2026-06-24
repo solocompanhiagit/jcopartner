@@ -12,7 +12,7 @@ Pasta pronta para upload manual no Netlify: publique o conteudo desta pasta, nao
 - Foi incluido o servico adicional `Sugestao de Adubacao e Calagem`, R$ 100,00, valido ate 5 amostras, com 1 sugestao por cultura.
 - A base `sellerCouponDatabase` foi preparada para cupons por vendedor, mas comecou vazia e sem cupons ativos.
 - O formulario foi adaptado para Netlify Forms com `multipart/form-data`, incluindo envio de anexo, dados do produtor, sacola de analises e totais.
-- O envio do formulario usa POST nativo para a Netlify, com pagina de confirmacao em `obrigado.html`.
+- O envio do formulario usa POST nativo para a Netlify e deixa a confirmacao padrao da Netlify assumir o retorno.
 - O anexo e limitado no navegador a 1 arquivo de ate 8 MB, conforme suporte de upload do Netlify Forms.
 - Os precos do catalogo e dos cards destacados foram alinhados aos valores oficiais.
 - O antigo combo nao oficial foi substituido por `BioAS Max Plus`, servico existente na planilha.

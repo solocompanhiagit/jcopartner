@@ -497,7 +497,7 @@
                     </div>
                 </div>
 
-                <form id="submission-form" name="solicitacao-amostras" method="POST" action="/obrigado.html" data-netlify="true" enctype="multipart/form-data" class="space-y-6" onsubmit="handleNetlifySubmit(event);">
+                <form id="submission-form" name="solicitacao-amostras" method="POST" data-netlify="true" enctype="multipart/form-data" class="space-y-6" onsubmit="return handleNetlifySubmit(event);">
                     <input type="hidden" name="form-name" value="solicitacao-amostras">
                     <input type="hidden" id="netlify-analyses" name="analises">
                     <input type="hidden" id="netlify-items-json" name="analises_json">
@@ -1450,18 +1450,19 @@
         }
 
         function handleNetlifySubmit(event) {
-            event.preventDefault();
+            if (!validateSubmissionForm()) {
+                event.preventDefault();
+                return false;
+            }
 
-            if (!validateSubmissionForm()) return;
-
-            const form = document.getElementById('submission-form');
             const feedback = document.getElementById('netlify-submit-feedback');
             const submitButton = document.getElementById('netlify-submit-button');
 
             if (isLocalPreview()) {
+                event.preventDefault();
                 feedback.className = "text-xs font-bold text-amber-400";
                 feedback.innerHTML = "Pre-visualizacao local: o envio com anexo so funciona depois de publicado na Netlify.";
-                return;
+                return false;
             }
 
             feedback.className = "text-xs font-bold text-amber-400";
@@ -1471,9 +1472,7 @@
             submitButton.innerHTML = `<i data-lucide="loader-circle" class="w-4 h-4 animate-spin"></i> Enviando...`;
             lucide.createIcons();
 
-            setTimeout(() => {
-                HTMLFormElement.prototype.submit.call(form);
-            }, 100);
+            return true;
         }
 
         function calculateCartTotals() {
