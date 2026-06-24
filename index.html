@@ -133,6 +133,27 @@
 </head>
 <body class="min-h-screen relative pb-16 antialiased">
 
+    <form name="solicitacao-amostras" netlify data-netlify="true" enctype="multipart/form-data" hidden>
+        <input type="hidden" name="form-name" value="solicitacao-amostras">
+        <input type="text" name="produtor">
+        <input type="text" name="fazenda">
+        <input type="text" name="cidade_uf">
+        <input type="text" name="whatsapp">
+        <input type="email" name="email_laudos">
+        <input type="text" name="vendedor">
+        <input type="text" name="laboratorio_destino">
+        <input type="text" name="cultura">
+        <input type="file" name="anexo">
+        <input type="text" name="analises">
+        <input type="text" name="analises_json">
+        <input type="text" name="subtotal">
+        <input type="text" name="desconto">
+        <input type="text" name="total">
+        <input type="text" name="cupom">
+        <input type="text" name="unidade_destino">
+        <input type="text" name="data_envio">
+    </form>
+
     <!-- Fundo de Partículas Aurora -->
     <div class="aurora-bg">
         <div class="aurora-orb orb-green"></div>
@@ -497,7 +518,7 @@
                     </div>
                 </div>
 
-                <form id="submission-form" name="solicitacao-amostras" method="POST" data-netlify="true" enctype="multipart/form-data" class="space-y-6" onsubmit="return handleNetlifySubmit(event);">
+                <form id="submission-form" name="solicitacao-amostras" method="POST" netlify data-netlify="true" enctype="multipart/form-data" class="space-y-6" onsubmit="return handleNetlifySubmit(event);">
                     <input type="hidden" name="form-name" value="solicitacao-amostras">
                     <input type="hidden" id="netlify-analyses" name="analises">
                     <input type="hidden" id="netlify-items-json" name="analises_json">
