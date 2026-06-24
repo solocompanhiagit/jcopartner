@@ -497,7 +497,7 @@
                     </div>
                 </div>
 
-                <form id="submission-form" name="solicitacao-amostras" method="POST" data-netlify="true" enctype="multipart/form-data" class="space-y-6" onsubmit="handleNetlifySubmit(event);">
+                <form id="submission-form" name="solicitacao-amostras" method="POST" action="/obrigado.html" data-netlify="true" enctype="multipart/form-data" class="space-y-6" onsubmit="handleNetlifySubmit(event);">
                     <input type="hidden" name="form-name" value="solicitacao-amostras">
                     <input type="hidden" id="netlify-analyses" name="analises">
                     <input type="hidden" id="netlify-items-json" name="analises_json">
@@ -559,6 +559,7 @@
                                     <span class="text-[11px]" id="file-status-text">Anexar arquivo</span>
                                 </div>
                             </div>
+                            <p class="mt-1 text-[10px] text-zinc-500">1 arquivo por envio, ate 8 MB.</p>
                         </div>
                     </div>
 
@@ -1049,6 +1050,7 @@
         let cartItems = [];
         let couponDiscountPercent = 0;
         let appliedCouponCode = "";
+        const maxNetlifyFileBytes = 8 * 1024 * 1024;
 
         // Base preparada para habilitar cupons por vendedor.
         // Preencha `sellers` usando a chave gerada por normalizeSellerName(nomeDoVendedor).
@@ -1143,9 +1145,24 @@
                 const dt = e.dataTransfer;
                 const files = dt.files;
                 if (files.length) {
-                    processFile(files[0]);
+                    if (syncDroppedFileWithInput(files[0])) {
+                        processFile(files[0]);
+                    }
                 }
             });
+        }
+
+        function syncDroppedFileWithInput(file) {
+            const fileInput = document.getElementById('form-file');
+            if (!fileInput || !window.DataTransfer) {
+                document.getElementById('file-status-text').innerHTML = `<span class="text-amber-400 font-bold">Use o botao Anexar arquivo</span>`;
+                return false;
+            }
+
+            const transfer = new DataTransfer();
+            transfer.items.add(file);
+            fileInput.files = transfer.files;
+            return true;
         }
 
         function handleFileSelect(event) {
@@ -1156,9 +1173,26 @@
         }
 
         function processFile(file) {
-            selectedFile = file;
             const statusText = document.getElementById('file-status-text');
-            statusText.innerHTML = `<span class="text-emerald-400 font-bold">${file.name}</span> (${(file.size/1024).toFixed(1)} KB)`;
+            const fileInput = document.getElementById('form-file');
+
+            if (file.size > maxNetlifyFileBytes) {
+                selectedFile = null;
+                if (fileInput) fileInput.value = '';
+                statusText.innerHTML = `<span class="text-red-400 font-bold">Arquivo acima de 8 MB</span>`;
+                return;
+            }
+
+            selectedFile = file;
+            statusText.innerHTML = `<span class="text-emerald-400 font-bold">${file.name}</span> (${formatFileSize(file.size)})`;
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes >= 1024 * 1024) {
+                return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+            }
+
+            return `${(bytes / 1024).toFixed(1)} KB`;
         }
 
         // Autocomplete de Busca de Outras Análises no Formulário
@@ -1410,7 +1444,12 @@
             return true;
         }
 
-        async function handleNetlifySubmit(event) {
+        function isLocalPreview() {
+            const host = window.location.hostname;
+            return window.location.protocol === 'file:' || host === '' || host === 'localhost' || host === '127.0.0.1';
+        }
+
+        function handleNetlifySubmit(event) {
             event.preventDefault();
 
             if (!validateSubmissionForm()) return;
@@ -1418,37 +1457,23 @@
             const form = document.getElementById('submission-form');
             const feedback = document.getElementById('netlify-submit-feedback');
             const submitButton = document.getElementById('netlify-submit-button');
-            const originalButtonHtml = submitButton.innerHTML;
+
+            if (isLocalPreview()) {
+                feedback.className = "text-xs font-bold text-amber-400";
+                feedback.innerHTML = "Pre-visualizacao local: o envio com anexo so funciona depois de publicado na Netlify.";
+                return;
+            }
 
             feedback.className = "text-xs font-bold text-amber-400";
-            feedback.innerHTML = "Enviando solicitação e anexo para a Netlify...";
+            feedback.innerHTML = "Enviando solicitacao e anexo para a Netlify...";
             submitButton.disabled = true;
             submitButton.classList.add('opacity-60', 'cursor-not-allowed');
             submitButton.innerHTML = `<i data-lucide="loader-circle" class="w-4 h-4 animate-spin"></i> Enviando...`;
             lucide.createIcons();
 
-            try {
-                const formData = new FormData(form);
-                const response = await fetch('/', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                if (!response.ok) {
-                    throw new Error('Falha no envio do formulário.');
-                }
-
-                feedback.className = "text-xs font-bold text-emerald-400";
-                feedback.innerHTML = "Solicitação enviada com sucesso pela Netlify.";
-            } catch (error) {
-                feedback.className = "text-xs font-bold text-red-400";
-                feedback.innerHTML = "Não foi possível enviar agora. Confira a conexão ou tente novamente após publicar na Netlify.";
-            } finally {
-                submitButton.disabled = false;
-                submitButton.classList.remove('opacity-60', 'cursor-not-allowed');
-                submitButton.innerHTML = originalButtonHtml;
-                lucide.createIcons();
-            }
+            setTimeout(() => {
+                HTMLFormElement.prototype.submit.call(form);
+            }, 100);
         }
 
         function calculateCartTotals() {
