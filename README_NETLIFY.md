@@ -11,12 +11,12 @@ Pasta pronta para upload manual no Netlify: publique o conteudo desta pasta, nao
 - O HTML agora possui os 50 servicos oficiais da planilha.
 - Foi incluido o servico adicional `Sugestao de Adubacao e Calagem`, R$ 100,00, valido ate 5 amostras, com 1 sugestao por cultura.
 - A base `sellerCouponDatabase` foi preparada para cupons por vendedor, mas comecou vazia e sem cupons ativos.
+- O formulario foi adaptado para Netlify Forms com `multipart/form-data`, incluindo envio de anexo, dados do produtor, sacola de analises e totais.
 - Os precos do catalogo e dos cards destacados foram alinhados aos valores oficiais.
 - O antigo combo nao oficial foi substituido por `BioAS Max Plus`, servico existente na planilha.
 
 ## Ainda fora de escopo tecnico
 
-- O upload de croqui/mapa mostra o nome do arquivo, mas nao envia o arquivo.
-- O formulario nao usa Netlify Forms; ele gera ficha/PDF e abre WhatsApp ou e-mail.
+- O envio por Netlify Forms so funciona quando o site estiver publicado na Netlify com deteccao de formularios habilitada.
 - Os cupons ainda rodam no navegador. Para validacao comercial segura, use backend ou Netlify Functions.
 - A pagina depende de CDNs externos: Tailwind, Google Fonts, Lucide e html2pdf.
