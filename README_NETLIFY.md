@@ -10,7 +10,9 @@ Pasta pronta para upload manual no Netlify: publique o conteudo desta pasta, nao
 - O catalogo foi refeito a partir da planilha oficial `Tabela de Servicos e Precos - Solo e Companhia V2.xlsx`.
 - O HTML agora possui os 50 servicos oficiais da planilha.
 - Foi incluido o servico adicional `Sugestao de Adubacao e Calagem`, R$ 100,00, valido ate 5 amostras, com 1 sugestao por cultura.
-- A base `sellerCouponDatabase` foi preparada para cupons por vendedor, mas comecou vazia e sem cupons ativos.
+- Foi incluido o cupom global `Teste10`, com 10% de desconto.
+- Foram incluidos os servicos `Solo Max Plus + Fosforos`, `Completa + Nitrogenio`, `MAP`, `Super Simples`, `Super Fosfato Triplo` e `Analise Metagenomica (Microbiologica)`.
+- A base `sellerCouponDatabase` segue preparada para cupons por vendedor.
 - A area de proposta foi simplificada para gerar PDF localmente; nao ha envio por formulario nem upload de anexo no site.
 - O usuario deve gerar o PDF e anexar/enviar manualmente pelo canal desejado.
 - Os precos do catalogo e dos cards destacados foram alinhados aos valores oficiais.
